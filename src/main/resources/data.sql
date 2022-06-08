@@ -1,5 +1,5 @@
-insert into customer (account, nickname, password, address, phone_number)
-values ('hohohoho', 'eden', 'a109e36947ad56de1dca1cc49f0ef8ac9ad9a7b1aa0df41fb3c4cb73c1ff01ea', 'address', '01012345678');
+insert into customer (id, account, nickname, password, address, phone_number)
+values (1, 'hohohoho', 'eden', 'a109e36947ad56de1dca1cc49f0ef8ac9ad9a7b1aa0df41fb3c4cb73c1ff01ea', 'address', '01012345678');
 
 insert into product (name, price, image_url)
 values ('삼립호빵', 5000, 'https://m.bakingmon.com/web/product/big/20200604/ca6e09b022765e331140afd0f8f81cbc.jpg');

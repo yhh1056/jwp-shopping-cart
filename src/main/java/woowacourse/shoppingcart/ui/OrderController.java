@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import woowacourse.auth.support.AuthenticationPrincipal;
 import woowacourse.shoppingcart.application.OrderService;
 import woowacourse.shoppingcart.domain.Orders;
-import woowacourse.shoppingcart.dto.OrderRequest;
+import woowacourse.shoppingcart.dto.OrderDto;
 
 @Validated
 @RestController
@@ -29,8 +29,8 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<Void> addOrder(@AuthenticationPrincipal Long customerId,
-            @RequestBody @Valid List<OrderRequest> orderDetails) {
-        final Long orderId = orderService.addOrder(orderDetails, customerId);
+            @RequestBody @Valid OrderDto orderDetails) {
+        final Long orderId = orderService.addOrder(orderDetails.getOrder(), customerId);
         return ResponseEntity.created(URI.create("/customers/orders/" + orderId)).build();
     }
 

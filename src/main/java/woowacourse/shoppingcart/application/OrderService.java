@@ -82,7 +82,6 @@ public class OrderService {
     }
 
     public List<Orders> findOrdersByCustomerName(Long customerId) {
-        orderRepository.findOrdersByCustomerId(customerId);
         final List<Long> orderIds = orderDao.findOrderIdsByCustomerId(customerId);
 
         return orderIds.stream()

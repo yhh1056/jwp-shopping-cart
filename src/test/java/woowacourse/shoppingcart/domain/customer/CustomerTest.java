@@ -9,6 +9,7 @@ import woowacourse.shoppingcart.domain.customer.vo.Account;
 import woowacourse.shoppingcart.domain.customer.vo.Address;
 import woowacourse.shoppingcart.domain.customer.vo.EncryptPassword;
 import woowacourse.shoppingcart.domain.customer.vo.Nickname;
+import woowacourse.shoppingcart.domain.customer.vo.Password;
 import woowacourse.shoppingcart.domain.customer.vo.PhoneNumber;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -26,6 +27,13 @@ class CustomerTest {
         Customer customer = new Customer(id, account, nickname, password, address, phoneNumber);
 
         assertThat(customer).isNotNull();
+    }
+
+    @Test
+    void hel() {
+        EncryptPassword encryptPassword = new EncryptPassword(new Password("Password123!"));
+
+        System.out.println(encryptPassword.getValue());
     }
 
 }
