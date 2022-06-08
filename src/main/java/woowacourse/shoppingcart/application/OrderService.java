@@ -14,6 +14,7 @@ import woowacourse.shoppingcart.domain.OrderDetail;
 import woowacourse.shoppingcart.domain.Orders;
 import woowacourse.shoppingcart.domain.Product;
 import woowacourse.shoppingcart.domain.customer.Customer;
+import woowacourse.shoppingcart.dto.OrderDto;
 import woowacourse.shoppingcart.dto.OrderRequest;
 import woowacourse.shoppingcart.entity.OrderDetailEntity;
 import woowacourse.shoppingcart.exception.InvalidOrderException;
@@ -34,13 +35,16 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final CartItemRepository cartItemRepository;
     private final OrderDetailRepository orderDetailRepository;
+    private final CartItemDao cartItemDao;
+    private final CustomerDao customerDao;
 
     public OrderService(OrderDao orderDao, OrdersDetailDao ordersDetailDao,
             ProductRepository productRepository,
             CustomerRepository customerRepository,
             OrderRepository orderRepository,
             CartItemRepository cartItemRepository,
-            OrderDetailRepository orderDetailRepository) {
+            OrderDetailRepository orderDetailRepository,
+            CartItemDao cartItemDao, CustomerDao customerDao) {
         this.orderDao = orderDao;
         this.ordersDetailDao = ordersDetailDao;
         this.productRepository = productRepository;
@@ -48,21 +52,30 @@ public class OrderService {
         this.orderRepository = orderRepository;
         this.cartItemRepository = cartItemRepository;
         this.orderDetailRepository = orderDetailRepository;
+        this.cartItemDao = cartItemDao;
+        this.customerDao = customerDao;
     }
 
-    @Transactional
-    public Long addOrder(List<OrderRequest> orderDetailRequests, Long customerId) {
-        Customer customer = getCustomer(customerId);
-        Long ordersId = orderRepository.save(customer);
-        for (OrderRequest orderDetail : orderDetailRequests) {
-            Long cartId = orderDetail.getCartId();
-            Product product = productRepository.findProductByCartId(cartId);
-            int quantity = orderDetail.getQuantity();
+    public long addOrder(final OrderDto orderDto, final long customerId) {
+        final long ordersId = orderDao.addOrders(customerId);
 
-            orderDetailRepository.save(ordersId, new OrderDetail(product, quantity));
-            cartItemRepository.deleteCartItem(cartId);
+        for (final OrderRequest orderDetail : orderDto.getOrder()) {
+            saveOrderDetail(ordersId, orderDetail);
+            deleteCartItem(customerId, orderDetail);
         }
+
         return ordersId;
+    }
+
+    private void saveOrderDetail(final long orderId, final OrderRequest orderDetail) {
+        final long productId = orderDetail.getCartId();
+        final int quantity = orderDetail.getQuantity();
+        ordersDetailDao.addOrdersDetail(orderId, productId, quantity);
+    }
+
+    private void deleteCartItem(final long customerId, final OrderRequest orderDetail) {
+        final long cartId = cartItemDao.findIdByCustomerIdAndProductId(customerId, orderDetail.getCartId());
+        cartItemDao.deleteCartItem(cartId);
     }
 
     private Customer getCustomer(Long customerId) {

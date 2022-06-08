@@ -51,7 +51,7 @@ class OrdersDetailDaoTest {
 
         //when
         Long orderDetailId = ordersDetailDao
-                .addOrdersDetail(new OrderDetailEntity(ordersId, productId, quantity));
+                .addOrdersDetail(ordersId, productId, quantity);
 
         //then
         assertThat(orderDetailId).isEqualTo(1L);

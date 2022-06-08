@@ -20,7 +20,6 @@ public class OrderDao {
             rs.getInt("quantity")
     );
 
-
     private final JdbcTemplate jdbcTemplate;
 
     public OrderDao(final JdbcTemplate jdbcTemplate) {

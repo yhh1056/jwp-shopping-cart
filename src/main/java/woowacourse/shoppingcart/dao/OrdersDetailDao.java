@@ -17,18 +17,18 @@ public class OrdersDetailDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Long addOrdersDetail(OrderDetailEntity orderDetail) {
+    public Long addOrdersDetail(final Long ordersId, final Long productId, final int quantity) {
         final String sql = "INSERT INTO orders_detail (orders_id, product_id, quantity) VALUES (?, ?, ?)";
         final KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(con -> {
             PreparedStatement preparedStatement = con.prepareStatement(sql, new String[]{"id"});
-            preparedStatement.setLong(1, orderDetail.getOrdersId());
-            preparedStatement.setLong(2, orderDetail.getProductId());
-            preparedStatement.setLong(3, orderDetail.getQuantity());
+            preparedStatement.setLong(1, ordersId);
+            preparedStatement.setLong(2, productId);
+            preparedStatement.setLong(3, quantity);
             return preparedStatement;
         }, keyHolder);
-        return Objects.requireNonNull(keyHolder.getKey()).longValue();
+        return keyHolder.getKey().longValue();
     }
 
     public List<OrderDetailEntity> findOrdersDetailsByOrderId(Long orderId) {

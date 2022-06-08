@@ -30,7 +30,7 @@ public class ProductDaoTest {
             NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.productDao = new ProductDao(jdbcTemplate);
         this.customerDao = new CustomerDao(namedParameterJdbcTemplate);
-        this.cartItemDao = new CartItemDao(jdbcTemplate);
+        this.cartItemDao = new CartItemDao(jdbcTemplate, namedParameterJdbcTemplate);
     }
 
     @DisplayName("Product를 저장하면, id를 반환한다.")

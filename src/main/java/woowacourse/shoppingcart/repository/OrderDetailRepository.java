@@ -16,6 +16,6 @@ public class OrderDetailRepository {
 
     public void save(Long ordersId, OrderDetail orderDetail) {
         ordersDetailDao.addOrdersDetail(
-                new OrderDetailEntity(ordersId, orderDetail.getId(), orderDetail.getQuantity()));
+                ordersId, orderDetail.getId(), orderDetail.getQuantity());
     }
 }

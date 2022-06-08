@@ -1,10 +1,16 @@
 package woowacourse.shoppingcart.dao;
 
 import java.sql.PreparedStatement;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -18,11 +24,15 @@ public class CartItemDao {
             rs.getLong("customer_id"),
             rs.getLong("product_id")
     );
+    private final RowMapper<Long> cartItemIdMapper = (rs, rowNum) -> rs.getLong("id");
 
     private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    public CartItemDao(final JdbcTemplate jdbcTemplate) {
+    public CartItemDao(final JdbcTemplate jdbcTemplate,
+            NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
     public List<Long> findProductIdsByCustomerId(final Long customerId) {
@@ -37,10 +47,10 @@ public class CartItemDao {
         return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getLong("id"), customerId);
     }
 
-    public CartItemEntity findProductIdById(final Long cartId) {
+    public Long findProductIdById(final Long cartId) {
         try {
-            final String sql = "SELECT customer_id, product_id FROM cart_item WHERE id = ?";
-            return jdbcTemplate.queryForObject(sql, ROW_MAPPER, cartId);
+            final String sql = "SELECT product_id FROM cart_item WHERE id = ?";
+            return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> rs.getLong("product_id"), cartId);
         } catch (EmptyResultDataAccessException e) {
             throw new InvalidCartItemException();
         }
@@ -66,5 +76,17 @@ public class CartItemDao {
         if (rowCount == 0) {
             throw new InvalidCartItemException();
         }
+    }
+
+    public Long findIdByCustomerIdAndProductId(long customerId, long productId) {
+        final String sql = "SELECT id FROM cart_item WHERE customer_id = :customerId AND product_id = :productId";
+
+        final Map<String, Object> parameters = new HashMap<>();
+        parameters.put("customerId", customerId);
+        parameters.put("productId", productId);
+
+        final List<Long> queryResult = namedParameterJdbcTemplate.query(sql, new MapSqlParameterSource(parameters), cartItemIdMapper);
+        final Optional<Long> result = Optional.ofNullable(DataAccessUtils.singleResult(queryResult));
+        return result.orElseThrow(InvalidCartItemException::new);
     }
 }

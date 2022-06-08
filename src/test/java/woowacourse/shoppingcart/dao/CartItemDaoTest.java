@@ -31,7 +31,7 @@ public class CartItemDaoTest {
             NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
-        cartItemDao = new CartItemDao(jdbcTemplate);
+        cartItemDao = new CartItemDao(jdbcTemplate, namedParameterJdbcTemplate);
         productDao = new ProductDao(jdbcTemplate);
         customerDao = new CustomerDao(namedParameterJdbcTemplate);
     }
