@@ -3,12 +3,23 @@ package woowacourse.shoppingcart.dao;
 import java.sql.PreparedStatement;
 import java.util.List;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import woowacourse.shoppingcart.entity.CartItemEntity;
+import woowacourse.shoppingcart.entity.OrderDetailEntity;
 
 @Repository
 public class OrderDao {
+
+    private static final RowMapper<OrderDetailEntity> ROW_MAPPER = (rs, rowNum) -> new OrderDetailEntity(
+            rs.getLong("id"),
+            rs.getLong("orders_id"),
+            rs.getLong("product_id"),
+            rs.getInt("quantity")
+    );
+
 
     private final JdbcTemplate jdbcTemplate;
 

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Repository;
+import woowacourse.common.exception.NotFoundException;
 import woowacourse.shoppingcart.dao.ProductDao;
 import woowacourse.shoppingcart.domain.Product;
 import woowacourse.shoppingcart.entity.ProductEntity;
@@ -55,5 +56,11 @@ public class ProductRepository {
         return productDao.findByCartByCustomerId(customerId).stream()
                 .map(this::toProduct)
                 .collect(Collectors.toList());
+    }
+
+    public Product findProductByCartId(Long cartId) {
+        return productDao.findProductByCartId(cartId)
+                .map(this::toProduct)
+                .orElseThrow(() -> new NotFoundException("상품을 찾을 수 없습니다."));
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.jdbc.Sql;
 import woowacourse.shoppingcart.domain.OrderDetail;
+import woowacourse.shoppingcart.entity.OrderDetailEntity;
 
 @JdbcTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
@@ -50,7 +51,7 @@ class OrdersDetailDaoTest {
 
         //when
         Long orderDetailId = ordersDetailDao
-                .addOrdersDetail(ordersId, productId, quantity);
+                .addOrdersDetail(new OrderDetailEntity(ordersId, productId, quantity));
 
         //then
         assertThat(orderDetailId).isEqualTo(1L);
@@ -68,8 +69,7 @@ class OrdersDetailDaoTest {
         }
 
         //when
-        final List<OrderDetail> ordersDetailsByOrderId = ordersDetailDao
-                .findOrdersDetailsByOrderId(ordersId);
+        List<OrderDetailEntity> ordersDetailsByOrderId = ordersDetailDao.findOrdersDetailsByOrderId(ordersId);
 
         //then
         assertThat(ordersDetailsByOrderId).hasSize(insertCount);

@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
+import woowacourse.shoppingcart.domain.Product;
 import woowacourse.shoppingcart.entity.ProductEntity;
 
 @Repository
@@ -66,5 +67,15 @@ public class ProductDao {
                 + "ON p.id = c.product_id "
                 + "WHERE c.customer_id = ?";
         return jdbcTemplate.query(query, ROW_MAPPER, customerId);
+    }
+
+    public Optional<ProductEntity> findProductByCartId(Long cartId) {
+        final String query = "SELECT p.id, p.name, p.price, p.image_url "
+                + "FROM product p "
+                + "JOIN cart_item c "
+                + "ON p.id = c.product_id "
+                + "WHERE c.id = ?";
+
+        return Optional.ofNullable(DataAccessUtils.singleResult(jdbcTemplate.query(query, ROW_MAPPER, cartId)));
     }
 }

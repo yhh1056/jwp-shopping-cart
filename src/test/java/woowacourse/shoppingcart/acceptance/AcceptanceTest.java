@@ -153,9 +153,7 @@ public class AcceptanceTest {
                 .extract();
     }
 
-    public ExtractableResponse<Response> 장바구니_아이템_추가_요청(String userName, Long productId) {
-        String accessToken = 회원_가입_후_토큰_발급("hoho", "Abc1234!");
-
+    public ExtractableResponse<Response> 장바구니_아이템_추가_요청(String accessToken, Long productId) {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("productId", productId);
 
@@ -216,37 +214,39 @@ public class AcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
 
-    public ExtractableResponse<Response> 주문하기_요청(String userName, List<OrderRequest> orderRequests) {
+    public ExtractableResponse<Response> 주문하기_요청(String accessToken, List<OrderRequest> orderRequests) {
         return RestAssured
                 .given().log().all()
+                .header("Authorization", "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(orderRequests)
-                .when().post("/api/customers/{customerName}/orders", userName)
+                .when().post("/customers/orders")
                 .then().log().all()
                 .extract();
     }
 
-    public ExtractableResponse<Response> 주문_내역_조회_요청(String userName) {
+    public ExtractableResponse<Response> 주문_내역_조회_요청(String accessToken) {
         return RestAssured
                 .given().log().all()
+                .header("Authorization", "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when().get("/api/customers/{customerName}/orders", userName)
+                .when().get("/customers/orders")
                 .then().log().all()
                 .extract();
     }
 
-    public ExtractableResponse<Response> 주문_단일_조회_요청(String userName, Long orderId) {
+    public ExtractableResponse<Response> 주문_단일_조회_요청(String accessToken, Long orderId) {
         return RestAssured
                 .given().log().all()
+                .header("Authorization", "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when().get("/api/customers/{customerName}/orders/{orderId}", userName, orderId)
+                .when().get("/customers/orders/{orderId}", orderId)
                 .then().log().all()
                 .extract();
     }
 
     public void 주문하기_성공함(ExtractableResponse<Response> response) {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
-        assertThat(response.header("Location")).isNotBlank();
     }
 
     public Long 주문하기_요청_성공되어_있음(String userName, List<OrderRequest> orderRequests) {

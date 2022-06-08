@@ -3,6 +3,7 @@ package woowacourse.shoppingcart.repository;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import woowacourse.shoppingcart.dao.CartItemDao;
+import woowacourse.shoppingcart.domain.Cart;
 import woowacourse.shoppingcart.domain.CartItem;
 import woowacourse.shoppingcart.entity.CartItemEntity;
 
